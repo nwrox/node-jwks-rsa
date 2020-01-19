@@ -11,6 +11,35 @@ describe("JwksClient", () => {
     nock.cleanAll();
   });
 
+  describe("#extractSigningKey", () => {
+    it("should convert pre-downloaded keys and filter the given kid", done => {
+      const client = new JwksClient();
+      const kid = "NkFCNEE1NDFDNTQ5RTQ5OTE1QzRBMjYyMzY0NEJCQTJBMjJBQkZCMA"
+
+      client.extractSigningKey(x5cMultiple, kid, (err, key) => {
+        expect(err).to.be.null;
+        expect(key).to.not.be.null;
+        expect(key.kid).to.equal(kid);
+
+        done();
+      });
+    });
+  })
+
+  describe("#extractSigningKeys", () => {
+    it("should convert all pre-downloaded keys", done => {
+      const client = new JwksClient();
+
+      client.extractSigningKeys(x5cMultiple, (err, keys) => {
+        expect(err).to.be.null;
+        expect(keys).to.not.be.null;
+        expect(keys.length).to.equal(2);
+
+        done();
+      });
+    });
+  })
+
   describe("#getKeys", () => {
     it("should handle errors", done => {
       nock(jwksHost)
